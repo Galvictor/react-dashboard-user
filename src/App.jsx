@@ -4,9 +4,9 @@ import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Test from './pages/Test.jsx';
+import UsersList from './pages/UsersList'; // Importe o novo componente
 import {isAuthenticated} from './auth';
 
-// Componente de proteção de rota
 const ProtectedRoute = ({children}) => {
     return isAuthenticated() ? children : <Navigate to="/"/>;
 };
@@ -15,10 +15,7 @@ export default function App() {
     return (
         <BrowserRouter>
             <Routes>
-                {/* Rota pública */}
                 <Route path="/" element={<Login/>}/>
-
-                {/* Rota protegida */}
                 <Route
                     path="/dashboard"
                     element={
@@ -27,8 +24,8 @@ export default function App() {
                         </ProtectedRoute>
                     }
                 >
-                    {/* Subrotas do dashboard */}
                     <Route path="teste" element={<Test/>}/>
+                    <Route path="usuarios" element={<UsersList/>}/> {/* Nova rota */}
                 </Route>
             </Routes>
         </BrowserRouter>

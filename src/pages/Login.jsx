@@ -13,8 +13,8 @@ import {
 } from 'reactstrap';
 
 export default function Login() {
-    const [user, setUser] = useState('');
-    const [pass, setPass] = useState('');
+    const [user, setUser] = useState('admin');
+    const [pass, setPass] = useState('123456');
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();

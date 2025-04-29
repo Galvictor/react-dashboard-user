@@ -1,0 +1,63 @@
+.users-list {
+    .card {
+        border: none;
+        border-radius: 0.5rem;
+
+        .card-header {
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+    }
+
+    .search-input {
+        &:focus {
+            box-shadow: none;
+            border-color: #80bdff;
+        }
+    }
+
+    .table {
+        th {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        td {
+            vertical-align: middle;
+        }
+    }
+
+    .btn-action {
+        padding: 0.25rem 0.5rem;
+
+        &:hover {
+            background-color: rgba(0,0,0,0.05);
+            border-radius: 0.25rem;
+        }
+
+        i {
+            font-size: 1.1rem;
+        }
+    }
+
+    .badge {
+        text-transform: capitalize;
+        font-weight: 500;
+    }
+
+    .pagination {
+        .page-link {
+            color: #6c757d;
+            padding: 0.5rem 0.75rem;
+
+            &:hover {
+                background-color: #f8f9fa;
+            }
+        }
+
+        .active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+        }
+    }
+}
