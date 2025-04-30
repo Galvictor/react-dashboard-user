@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import axios from 'axios';
 import {
     Container,
     Card,
@@ -16,7 +15,6 @@ import {
 import UserTable from '../../components/UserTable';
 import UserPagination from '../../components/UserPagination';
 import UserModal from '../../components/UserModal';
-import {handleApiError} from '../../utils/formatters';
 import Permission from '../../components/Permission.jsx';
 import {getUsers} from "../../services/api.js";
 

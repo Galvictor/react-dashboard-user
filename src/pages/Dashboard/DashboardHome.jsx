@@ -1,5 +1,5 @@
 import React from 'react';
-import {Container, Card, Row, Col} from 'reactstrap';
+import {Container} from 'reactstrap';
 
 export default function DashboardHome() {
     return (
