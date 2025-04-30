@@ -67,7 +67,7 @@ const Profile = () => {
             try {
                 await deleteOwnAccount(); // Usa o serviço `deleteOwnAccount`
                 logout(); // Remove dados locais ao deletar a conta
-                navigate('/login'); // Redireciona para a página de login
+                navigate('/'); // Redireciona para a página de login
             } catch (err) {
                 setError('Erro ao deletar a conta!');
             }
