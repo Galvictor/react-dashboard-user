@@ -18,6 +18,7 @@ import UserPagination from '../../components/UserPagination';
 import UserModal from '../../components/UserModal';
 import {handleApiError} from '../../utils/formatters';
 import Permission from '../../components/Permission.jsx';
+import {getUsers} from "../../services/api.js";
 
 export default function UsersList() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -27,25 +28,23 @@ export default function UsersList() {
     const [error, setError] = useState(null);
     const [modal, setModal] = useState({isOpen: false, user: null, action: null});
 
-    // Fetch users
+    // Busca usuários da API
     useEffect(() => {
         const fetchUsers = async () => {
+            setLoading(true);
             try {
-                setLoading(true);
-                const response = await axios.get('http://localhost:3000/users', {
-                    params: {page: currentPage, limit: 5},
-                });
-                setUserData(response.data);
+                const results = await getUsers(currentPage, 5, searchTerm);
+                setUserData(results);
                 setError(null);
             } catch (err) {
-                setError(handleApiError(err));
+                setError('Erro ao carregar usuários');
             } finally {
                 setLoading(false);
             }
         };
 
         fetchUsers();
-    }, [currentPage]);
+    }, [currentPage, searchTerm]);
 
     const toggleModal = () => setModal({isOpen: !modal.isOpen, user: null, action: null});
 

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {loginUser} from "./api.js";
 
 // Criando uma variável para armazenar a função de navegação
 let navigate;
@@ -22,15 +23,11 @@ axios.interceptors.request.use(config => {
 
 export const login = async (email, password) => {
     try {
-        const response = await axios.post('http://localhost:3000/users/login', {
-            email,
-            password
-        });
-
-        if (response.data.success) {
-            user = response.data.user;
-            sessionStorage.setItem('token', response.data.token);
-            sessionStorage.setItem('user', JSON.stringify(response.data.user));
+        const response = await loginUser(email, password);
+        if (response.success) {
+            user = response.user;
+            sessionStorage.setItem('token', response.token);
+            sessionStorage.setItem('user', JSON.stringify(response.user));
             sessionStorage.setItem('auth', 'true');
             return true;
         }

@@ -1,80 +1,82 @@
 import React, {useState, useEffect} from 'react';
 import {Container, Card, Form, Button, Alert, FormGroup, Label, Input} from 'reactstrap';
-import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
-import {getToken} from '../../services/auth.jsx';
+import {getUserProfile, updateUser, deleteOwnAccount} from '../../services/api';
+import {logout} from '../../services/auth';
 
 const Profile = () => {
     const [user, setUser] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const navigate = useNavigate();
-
     const [formData, setFormData] = useState({
         nome: '',
         dataNascimento: '',
         telefone: '',
         email: ''
     });
+    const navigate = useNavigate();
 
+    // Busca inicial do perfil do usuário
     useEffect(() => {
-        fetchUserProfile();
+        const fetchUser = async () => {
+            try {
+                const data = await getUserProfile();
+                setUser(data.data);
+                setFormData({
+                    nome: data.data.nome,
+                    dataNascimento: data.data.dataNascimento,
+                    telefone: data.data.telefone,
+                    email: data.data.email
+                });
+            } catch (err) {
+                setError('Erro ao carregar o perfil!');
+            }
+        };
+
+        fetchUser();
     }, []);
 
-    const fetchUserProfile = async () => {
-        try {
-            const response = await axios.get('http://localhost:3000/users/me', {
-                headers: {Authorization: `Bearer ${getToken()}`}
-            });
-            setUser(response.data.data);
-            setFormData({
-                nome: response.data.data.nome,
-                dataNascimento: response.data.data.dataNascimento,
-                telefone: response.data.data.telefone,
-                email: response.data.data.email
-            });
-        } catch (err) {
-            setError('Erro ao carregar perfil');
-        }
-    };
-
     const handleInputChange = (e) => {
+        const {name, value} = e.target;
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value
+            [name]: value
         });
     };
 
     const handleUpdate = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`http://localhost:3000/users/${user.id}`, formData, {
-                headers: {Authorization: `Bearer ${getToken()}`}
-            });
+            await updateUser(user.id, formData); // Usa o serviço `updateUser`
             setSuccess('Perfil atualizado com sucesso!');
             setEditMode(false);
-            fetchUserProfile();
+
+            const updatedUser = {
+                ...user,
+                ...formData,
+            };
+            setUser(updatedUser); // Atualiza os dados localmente após a modificação
         } catch (err) {
-            setError('Erro ao atualizar perfil');
+            setError('Erro ao atualizar o perfil!');
         }
     };
 
     const handleDelete = async () => {
         if (window.confirm('Tem certeza que deseja deletar sua conta?')) {
             try {
-                await axios.delete(`http://localhost:3000/users/${user.id}`, {
-                    headers: {Authorization: `Bearer ${getToken()}`}
-                });
-                localStorage.removeItem('token');
-                navigate('/login');
+                await deleteOwnAccount(); // Usa o serviço `deleteOwnAccount`
+                logout(); // Remove dados locais ao deletar a conta
+                navigate('/login'); // Redireciona para a página de login
             } catch (err) {
-                setError('Erro ao deletar conta');
+                setError('Erro ao deletar a conta!');
             }
         }
     };
 
-    if (!user) return <div>Carregando...</div>;
+    if (!user) {
+        return <div>Carregando...</div>;
+    }
 
     return (
         <Container className="mt-4">
