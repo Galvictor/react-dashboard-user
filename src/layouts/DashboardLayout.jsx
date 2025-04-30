@@ -17,14 +17,18 @@ export default function DashboardLayout() {
             <aside className="sidebar d-flex flex-column p-3">
                 <h5 className="text-white mb-4">Painel</h5>
                 <nav className="nav flex-column mb-auto">
+                    <Link to="/dashboard" className="nav-link text-white">
+                        <i className="bi bi-house-door me-2"/>
+                        Home
+                    </Link>
                     <Link to="/dashboard/usuarios" className="nav-link text-white">
                         <i className="bi bi-people-fill me-2"/>
                         Usuários
                     </Link>
-                    <Link to="/dashboard/teste" className="nav-link text-white">
-                        <i className="bi bi-speedometer2 me-2"/>
-                        Rota de Teste
-                    </Link>
+                    {/*<Link to="/dashboard/teste" className="nav-link text-white">*/}
+                    {/*    <i className="bi bi-speedometer2 me-2"/>*/}
+                    {/*    Rota de Teste*/}
+                    {/*</Link>*/}
                     <Link to="/dashboard/profile" className="nav-link text-white">
                         <i className="bi bi-person-circle me-2"/>
                         Meu Perfil

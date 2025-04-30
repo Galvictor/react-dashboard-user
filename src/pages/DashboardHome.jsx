@@ -16,7 +16,7 @@ export default function DashboardHome() {
                                 Use o menu lateral para navegar entre as diferentes seções.
                             </p>
                             <div className="row mt-4">
-                                <div className="col-md-4">
+                                <div className="col-md-6">
                                     <div className="card bg-light">
                                         <div className="card-body">
                                             <i className="bi bi-people-fill text-primary mb-3"
@@ -26,17 +26,7 @@ export default function DashboardHome() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="col-md-4">
-                                    <div className="card bg-light">
-                                        <div className="card-body">
-                                            <i className="bi bi-speedometer2 text-primary mb-3"
-                                               style={{fontSize: '2rem'}}></i>
-                                            <h5>Área de Teste</h5>
-                                            <p className="small">Acesse a área de testes</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-4">
+                                <div className="col-md-6">
                                     <div className="card bg-light">
                                         <div className="card-body">
                                             <i className="bi bi-person-circle text-primary mb-3"
