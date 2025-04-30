@@ -8,7 +8,6 @@ export default function ProtectedRoute({ children, roles }) {
   }
 
   const userRole = getUserRole();
-  console.log('userRole', userRole);
   if (roles && !roles.includes(userRole)) {
     return <Navigate to="/dashboard" />; // Redirecionar para um local adequado
   }

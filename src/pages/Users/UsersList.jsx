@@ -78,7 +78,8 @@ export default function UsersList() {
                     {loading ? (
                         <div className="spinner-border text-primary"/>
                     ) : (
-                        <UserTable users={userData.data}/>
+                        <UserTable users={userData.data} onEdit={(user) => console.log('Editar:', user)}
+                                   onDelete={(user) => console.log('Deletar:', user)}/>
                     )}
 
                     <UserPagination

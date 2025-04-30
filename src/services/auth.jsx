@@ -27,8 +27,6 @@ export const login = async (email, password) => {
             password
         });
 
-        console.log('Resposta do login:', response.data);
-
         if (response.data.success) {
             user = response.data.user;
             sessionStorage.setItem('token', response.data.token);
@@ -47,7 +45,6 @@ export const login = async (email, password) => {
 export const isAuthenticated = () => {
     if (!user) {
         const savedUser = sessionStorage.getItem('user');
-        console.log('savedUser:', savedUser);
         if (savedUser) {
             user = JSON.parse(savedUser);
         }
