@@ -50,6 +50,10 @@ export const getUser = () => {
     return userStr ? JSON.parse(userStr) : null;
 };
 
+export const getToken = () => {
+    return sessionStorage.getItem('token');
+};
+
 export const logout = () => {
     sessionStorage.removeItem('auth');
     sessionStorage.removeItem('token');

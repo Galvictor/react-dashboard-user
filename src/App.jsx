@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Test from './pages/Test.jsx';
 import UsersList from './pages/UsersList'; // Importe o novo componente
 import {isAuthenticated} from './auth';
+import Profile from "./pages/Profile.jsx";
 
 const ProtectedRoute = ({children}) => {
     return isAuthenticated() ? children : <Navigate to="/"/>;
@@ -25,7 +26,8 @@ export default function App() {
                     }
                 >
                     <Route path="teste" element={<Test/>}/>
-                    <Route path="usuarios" element={<UsersList/>}/> {/* Nova rota */}
+                    <Route path="usuarios" element={<UsersList/>}/>
+                    <Route path="profile" element={<Profile />} />
                 </Route>
             </Routes>
         </BrowserRouter>

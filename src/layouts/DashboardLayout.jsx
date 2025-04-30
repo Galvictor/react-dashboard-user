@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { logout } from '../auth';
+import {Link, Outlet, useNavigate} from 'react-router-dom';
+import {logout} from '../auth';
 import './DashboardLayout.scss';
 
 export default function DashboardLayout() {
@@ -18,23 +18,27 @@ export default function DashboardLayout() {
                 <h5 className="text-white mb-4">Painel</h5>
                 <nav className="nav flex-column mb-auto">
                     <Link to="/dashboard/usuarios" className="nav-link text-white">
-                        <i className="bi bi-people-fill me-2" />
+                        <i className="bi bi-people-fill me-2"/>
                         Usuários
                     </Link>
                     <Link to="/dashboard/teste" className="nav-link text-white">
-                        <i className="bi bi-speedometer2 me-2" />
+                        <i className="bi bi-speedometer2 me-2"/>
                         Rota de Teste
+                    </Link>
+                    <Link to="/dashboard/profile" className="nav-link text-white">
+                        <i className="bi bi-person-circle me-2"/>
+                        Meu Perfil
                     </Link>
                 </nav>
                 <button onClick={handleLogout} className="btn btn-outline-light mt-auto">
-                    <i className="bi bi-box-arrow-right me-2" />
+                    <i className="bi bi-box-arrow-right me-2"/>
                     Sair
                 </button>
             </aside>
 
             {/* Conteúdo */}
             <main className="content p-4 w-100">
-                <Outlet />
+                <Outlet/>
             </main>
         </div>
     );
