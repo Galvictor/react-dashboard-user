@@ -7,6 +7,7 @@ import Test from './pages/Test.jsx';
 import UsersList from './pages/UsersList'; // Importe o novo componente
 import {isAuthenticated} from './auth';
 import Profile from "./pages/Profile.jsx";
+import DashboardHome from "./pages/DashboardHome.jsx";
 
 const ProtectedRoute = ({children}) => {
     return isAuthenticated() ? children : <Navigate to="/"/>;
@@ -25,9 +26,10 @@ export default function App() {
                         </ProtectedRoute>
                     }
                 >
+                    <Route index element={<DashboardHome/>}/>
                     <Route path="teste" element={<Test/>}/>
                     <Route path="usuarios" element={<UsersList/>}/>
-                    <Route path="profile" element={<Profile />} />
+                    <Route path="profile" element={<Profile/>}/>
                 </Route>
             </Routes>
         </BrowserRouter>
