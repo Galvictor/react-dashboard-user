@@ -21,6 +21,7 @@ import './UsersList.scss';
 export default function UsersList() {
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [limit] = useState(5); // Definindo o limite fixo de 5 itens por página
     const [userData, setUserData] = useState({
         success: true,
         pagination: {
@@ -40,7 +41,7 @@ export default function UsersList() {
                 const response = await axios.get('http://localhost:3000/users', {
                     params: {
                         page: currentPage,
-                        search: searchTerm
+                        limit: limit // Adicionando o parâmetro limit
                     }
                 });
                 setUserData(response.data);
@@ -54,7 +55,7 @@ export default function UsersList() {
         };
 
         fetchUsers();
-    }, [currentPage, searchTerm]);
+    }, [currentPage, limit]); // Atualizando as dependências
 
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('pt-BR');
@@ -71,16 +72,16 @@ export default function UsersList() {
 
     const handleSearch = (e) => {
         e.preventDefault();
-        setCurrentPage(1); // Reseta para primeira página ao pesquisar
+        setCurrentPage(1);
     };
 
     const renderPaginationItems = () => {
         const items = [];
-        const {totalPages} = userData.pagination;
+        const totalPages = Math.ceil(userData.pagination.totalItems / limit);
 
         items.push(
             <PaginationItem key="prev" disabled={currentPage === 1}>
-                <PaginationLink previous onClick={() => setCurrentPage(currentPage - 1)}/>
+                <PaginationLink previous onClick={() => setCurrentPage(prev => prev - 1)}/>
             </PaginationItem>
         );
 
@@ -96,7 +97,7 @@ export default function UsersList() {
 
         items.push(
             <PaginationItem key="next" disabled={currentPage === totalPages}>
-                <PaginationLink next onClick={() => setCurrentPage(currentPage + 1)}/>
+                <PaginationLink next onClick={() => setCurrentPage(prev => prev + 1)}/>
             </PaginationItem>
         );
 
