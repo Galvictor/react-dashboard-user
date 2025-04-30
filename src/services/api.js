@@ -57,6 +57,12 @@ export const updateUser = async (userId, userData) => {
     return response.data;
 };
 
+// Atualizar dados do próprio usuário
+export const updateOwnAccount = async (userData) => {
+    const response = await api.put('/users/me', userData);
+    return response.data;
+};
+
 // Deletar um usuário
 export const deleteUser = async (userId) => {
     const response = await api.delete(`/users/${userId}`);

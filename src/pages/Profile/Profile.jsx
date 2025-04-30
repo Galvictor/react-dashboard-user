@@ -14,7 +14,7 @@ import {
     ModalFooter,
 } from 'reactstrap';
 import {useNavigate} from 'react-router-dom';
-import {getUserProfile, updateUser, deleteOwnAccount} from '../../services/api';
+import {getUserProfile, deleteOwnAccount, updateOwnAccount} from '../../services/api';
 import {logout} from '../../services/auth';
 
 const Profile = () => {
@@ -63,7 +63,7 @@ const Profile = () => {
     const handleUpdate = async (e) => {
         e.preventDefault();
         try {
-            await updateUser(user.id, formData);
+            await updateOwnAccount(formData);
             setSuccess('Perfil atualizado com sucesso!');
             setEditMode(false);
 
