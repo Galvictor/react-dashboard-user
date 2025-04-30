@@ -4,6 +4,7 @@ import {Container, Card, CardHeader, CardBody, Row, Col, Button, Input, InputGro
 import UserTable from '../../components/UserTable';
 import UserPagination from '../../components/UserPagination';
 import {handleApiError} from '../../utils/formatters';
+import Permission from "../../components/Permission.jsx";
 
 export default function UsersList() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -45,10 +46,12 @@ export default function UsersList() {
                             <h4>Usuários</h4>
                         </Col>
                         <Col md={6} className="text-end">
-                            <Button color="primary">
-                                <i className="bi bi-plus-circle me-2"/>
-                                Novo Usuário
-                            </Button>
+                            <Permission roles={['admin']}>
+                                <Button color="primary">
+                                    <i className="bi bi-plus-circle me-2"/>
+                                    Novo Usuário
+                                </Button>
+                            </Permission>
                         </Col>
                     </Row>
                 </CardHeader>

@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link, Outlet, useNavigate} from 'react-router-dom';
-import {logout} from '../services/auth.jsx';
+import {logout} from '../services/auth';
+import Permission from '../components/Permission';
 import './DashboardLayout.scss';
 
 export default function DashboardLayout() {
@@ -17,14 +18,21 @@ export default function DashboardLayout() {
             <aside className="sidebar d-flex flex-column p-3">
                 <h5 className="text-white mb-4">Painel</h5>
                 <nav className="nav flex-column mb-auto">
+                    {/* Link visível para todos os usuários */}
                     <Link to="/dashboard" className="nav-link text-white">
                         <i className="bi bi-house-door me-2"/>
                         Home
                     </Link>
-                    <Link to="/dashboard/usuarios" className="nav-link text-white">
-                        <i className="bi bi-people-fill me-2"/>
-                        Usuários
-                    </Link>
+
+                    {/* Link apenas para admin e professor */}
+                    <Permission roles={['admin', 'professor']}>
+                        <Link to="/dashboard/usuarios" className="nav-link text-white">
+                            <i className="bi bi-people-fill me-2"/>
+                            Usuários
+                        </Link>
+                    </Permission>
+
+                    {/* Link visível para todos */}
                     <Link to="/dashboard/profile" className="nav-link text-white">
                         <i className="bi bi-person-circle me-2"/>
                         Meu Perfil

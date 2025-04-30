@@ -3,6 +3,8 @@ import axios from 'axios';
 // Criando uma variável para armazenar a função de navegação
 let navigate;
 
+let user = null;
+
 // Função para configurar o navigate
 export const setNavigate = (navigateFunc) => {
     navigate = navigateFunc;
@@ -28,6 +30,7 @@ export const login = async (email, password) => {
         console.log('Resposta do login:', response.data);
 
         if (response.data.success) {
+            user = response.data.user;
             sessionStorage.setItem('token', response.data.token);
             sessionStorage.setItem('user', JSON.stringify(response.data.user));
             sessionStorage.setItem('auth', 'true');
@@ -42,6 +45,15 @@ export const login = async (email, password) => {
 };
 
 export const isAuthenticated = () => {
+    if (!user) {
+        const savedUser = sessionStorage.getItem('user');
+        console.log('savedUser:', savedUser);
+        if (savedUser) {
+            user = JSON.parse(savedUser);
+        }
+    }
+
+
     return sessionStorage.getItem('auth') === 'true' && !!sessionStorage.getItem('token');
 };
 
@@ -54,7 +66,17 @@ export const getToken = () => {
     return sessionStorage.getItem('token');
 };
 
+export function getUserRole() {
+    return user?.funcao || null; // Retorna função do usuário
+}
+
+export function getUserId() {
+    return user?.id || null; // Retorna ID do usuário
+}
+
+
 export const logout = () => {
+    user = null;
     sessionStorage.removeItem('auth');
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
