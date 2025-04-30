@@ -66,21 +66,37 @@ export default function UsersList() {
     const saveUser = (userData) => {
         if (modal.action === 'create') {
             console.log("Criar usuário:", userData);
-            createUser(userData).then(() => {
+            createUser(userData).then((response) => {
                 // Lógica para atualizar a lista de usuários
+
+                const newUser = response.data;
+
+                // Atualizar lista de usuários e totais de paginação
                 setUserData(prev => ({
                     ...prev,
-                    data: [...prev.data, userData]
+                    data: [...prev.data, newUser], // Adiciona o usuário criado na lista
+                    pagination: {
+                        ...prev.pagination,
+                        totalItems: prev.pagination.totalItems + 1, // Incrementa total de itens
+                        totalPages: Math.ceil((prev.pagination.totalItems + 1) / 5) // Recalcula total de páginas
+                    }
                 }));
+
+                setCurrentPage(prev => Math.ceil((prev.pagination.totalItems + 1) / 5));
+
             }).catch(err => console.error('Erro ao criar usuário:', err));
         } else if (modal.action === 'edit') {
             console.log("Editar usuário:", userData);
-            updateUser(modal.user.id, userData).then(() => {
+            updateUser(modal.user.id, userData).then((response) => {
                 // Lógica para atualizar a lista de usuários
+
+                const updatedUser = response.data;
+
                 setUserData(prev => ({
                     ...prev,
-                    data: prev.data.map(user => user.id === modal.user.id ? userData : user)
+                    data: prev.data.map(user => user.id === updatedUser.id ? updatedUser : user)
                 }));
+
             }).catch(err => console.error('Erro ao editar usuário:', err));
         }
         toggleModal();
@@ -144,6 +160,7 @@ export default function UsersList() {
                     <UserPagination
                         currentPage={currentPage}
                         totalPages={userData.pagination.totalPages || 1}
+                        totalItems={userData.pagination.totalItems || 0}
                         onPageChange={setCurrentPage}
                     />
                 </CardBody>

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Pagination, PaginationItem, PaginationLink} from 'reactstrap';
 
-export default function UserPagination({currentPage, totalPages, onPageChange}) {
+export default function UserPagination({currentPage, totalPages, totalItems, onPageChange}) {
     const renderPaginationItems = () => {
         const items = [];
 
@@ -28,5 +28,12 @@ export default function UserPagination({currentPage, totalPages, onPageChange}) 
         return items;
     };
 
-    return <Pagination>{renderPaginationItems()}</Pagination>;
+    return (
+        <div>
+            <div className="mb-2 text-muted">
+                Total de itens: {totalItems} {/* Exibe o total de itens */}
+            </div>
+            <Pagination>{renderPaginationItems()}</Pagination>
+        </div>
+    );
 }
