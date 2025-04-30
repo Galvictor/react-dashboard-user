@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {login} from '../auth';
+import {login} from '../../services/auth.jsx';
 import {
     Container,
     Form,

@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {Container, Card, Form, Button, Alert, FormGroup, Label, Input} from 'reactstrap';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
-import {getToken} from '../auth';
+import {getToken} from '../../services/auth.jsx';
 
 const Profile = () => {
     const [user, setUser] = useState(null);

@@ -1,13 +1,12 @@
 import React from 'react';
 import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Test from './pages/Test.jsx';
-import UsersList from './pages/UsersList'; // Importe o novo componente
-import {isAuthenticated} from './auth';
-import Profile from "./pages/Profile.jsx";
-import DashboardHome from "./pages/DashboardHome.jsx";
+import Login from './pages/Login/Login.jsx';
+import Dashboard from './pages/Dashboard/Dashboard.jsx';
+import UsersList from './pages/Users/UsersList.jsx'; // Importe o novo componente
+import {isAuthenticated} from './services/auth.jsx';
+import Profile from "./pages/Profile/Profile.jsx";
+import DashboardHome from "./pages/Dashboard/DashboardHome.jsx";
 
 const ProtectedRoute = ({children}) => {
     return isAuthenticated() ? children : <Navigate to="/"/>;
@@ -27,7 +26,6 @@ export default function App() {
                     }
                 >
                     <Route index element={<DashboardHome/>}/>
-                    <Route path="teste" element={<Test/>}/>
                     <Route path="usuarios" element={<UsersList/>}/>
                     <Route path="profile" element={<Profile/>}/>
                 </Route>

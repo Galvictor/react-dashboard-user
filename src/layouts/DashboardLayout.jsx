@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link, Outlet, useNavigate} from 'react-router-dom';
-import {logout} from '../auth';
+import {logout} from '../services/auth.jsx';
 import './DashboardLayout.scss';
 
 export default function DashboardLayout() {
@@ -25,10 +25,6 @@ export default function DashboardLayout() {
                         <i className="bi bi-people-fill me-2"/>
                         Usuários
                     </Link>
-                    {/*<Link to="/dashboard/teste" className="nav-link text-white">*/}
-                    {/*    <i className="bi bi-speedometer2 me-2"/>*/}
-                    {/*    Rota de Teste*/}
-                    {/*</Link>*/}
                     <Link to="/dashboard/profile" className="nav-link text-white">
                         <i className="bi bi-person-circle me-2"/>
                         Meu Perfil
