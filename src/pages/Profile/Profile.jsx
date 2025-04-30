@@ -1,5 +1,18 @@
 import React, {useState, useEffect} from 'react';
-import {Container, Card, Form, Button, Alert, FormGroup, Label, Input} from 'reactstrap';
+import {
+    Container,
+    Card,
+    Form,
+    Button,
+    Alert,
+    FormGroup,
+    Label,
+    Input,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+} from 'reactstrap';
 import {useNavigate} from 'react-router-dom';
 import {getUserProfile, updateUser, deleteOwnAccount} from '../../services/api';
 import {logout} from '../../services/auth';
@@ -13,11 +26,13 @@ const Profile = () => {
         nome: '',
         dataNascimento: '',
         telefone: '',
-        email: ''
+        email: '',
     });
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Estado para o modal
     const navigate = useNavigate();
 
-    // Busca inicial do perfil do usuário
+    const toggleDeleteModal = () => setIsDeleteModalOpen(!isDeleteModalOpen); // Função para alternar o modal
+
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -27,7 +42,7 @@ const Profile = () => {
                     nome: data.data.nome,
                     dataNascimento: data.data.dataNascimento,
                     telefone: data.data.telefone,
-                    email: data.data.email
+                    email: data.data.email,
                 });
             } catch (err) {
                 setError('Erro ao carregar o perfil!');
@@ -41,14 +56,14 @@ const Profile = () => {
         const {name, value} = e.target;
         setFormData({
             ...formData,
-            [name]: value
+            [name]: value,
         });
     };
 
     const handleUpdate = async (e) => {
         e.preventDefault();
         try {
-            await updateUser(user.id, formData); // Usa o serviço `updateUser`
+            await updateUser(user.id, formData);
             setSuccess('Perfil atualizado com sucesso!');
             setEditMode(false);
 
@@ -56,21 +71,19 @@ const Profile = () => {
                 ...user,
                 ...formData,
             };
-            setUser(updatedUser); // Atualiza os dados localmente após a modificação
+            setUser(updatedUser);
         } catch (err) {
             setError('Erro ao atualizar o perfil!');
         }
     };
 
-    const handleDelete = async () => {
-        if (window.confirm('Tem certeza que deseja deletar sua conta?')) {
-            try {
-                await deleteOwnAccount(); // Usa o serviço `deleteOwnAccount`
-                logout(); // Remove dados locais ao deletar a conta
-                navigate('/'); // Redireciona para a página de login
-            } catch (err) {
-                setError('Erro ao deletar a conta!');
-            }
+    const handleDeleteAccount = async () => {
+        try {
+            await deleteOwnAccount();
+            logout();
+            navigate('/');
+        } catch (err) {
+            setError('Erro ao deletar a conta!');
         }
     };
 
@@ -137,22 +150,52 @@ const Profile = () => {
                     </Form>
                 ) : (
                     <div>
-                        <p><strong>Nome:</strong> {user.nome}</p>
-                        <p><strong>Data de Nascimento:</strong> {new Date(user.dataNascimento).toLocaleDateString()}</p>
-                        <p><strong>Telefone:</strong> {user.telefone}</p>
-                        <p><strong>Email:</strong> {user.email}</p>
-                        <p><strong>Função:</strong> {user.funcao}</p>
-                        <p><strong>Criado em:</strong> {new Date(user.criadoEm).toLocaleDateString()}</p>
+                        <p>
+                            <strong>Nome:</strong> {user.nome}
+                        </p>
+                        <p>
+                            <strong>Data de Nascimento:</strong> {new Date(
+                            user.dataNascimento
+                        ).toLocaleDateString()}
+                        </p>
+                        <p>
+                            <strong>Telefone:</strong> {user.telefone}
+                        </p>
+                        <p>
+                            <strong>Email:</strong> {user.email}
+                        </p>
+                        <p>
+                            <strong>Função:</strong> {user.funcao}
+                        </p>
+                        <p>
+                            <strong>Criado em:</strong> {new Date(
+                            user.criadoEm
+                        ).toLocaleDateString()}
+                        </p>
 
                         <Button color="primary" onClick={() => setEditMode(true)} className="me-2">
                             Editar Perfil
                         </Button>
-                        <Button color="danger" onClick={handleDelete}>
+                        <Button color="danger" onClick={toggleDeleteModal}>
                             Deletar Conta
                         </Button>
                     </div>
                 )}
             </Card>
+
+            {/* Modal de Confirmação de Deleção */}
+            <Modal isOpen={isDeleteModalOpen} toggle={toggleDeleteModal}>
+                <ModalHeader toggle={toggleDeleteModal}>Confirmar Exclusão</ModalHeader>
+                <ModalBody>Tem certeza que deseja deletar sua conta?</ModalBody>
+                <ModalFooter>
+                    <Button color="danger" onClick={handleDeleteAccount}>
+                        Deletar
+                    </Button>
+                    <Button color="secondary" onClick={toggleDeleteModal}>
+                        Cancelar
+                    </Button>
+                </ModalFooter>
+            </Modal>
         </Container>
     );
 };
