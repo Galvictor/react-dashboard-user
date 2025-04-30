@@ -16,7 +16,7 @@ import UserTable from '../../components/UserTable';
 import UserPagination from '../../components/UserPagination';
 import UserModal from '../../components/UserModal';
 import Permission from '../../components/Permission.jsx';
-import {getUsers} from "../../services/api.js";
+import {createUser, getUsers, updateUser} from "../../services/api.js";
 
 export default function UsersList() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -66,13 +66,26 @@ export default function UsersList() {
     const saveUser = (userData) => {
         if (modal.action === 'create') {
             console.log("Criar usuário:", userData);
-            // Chamar API para criar
+            createUser(userData).then(() => {
+                // Lógica para atualizar a lista de usuários
+                setUserData(prev => ({
+                    ...prev,
+                    data: [...prev.data, userData]
+                }));
+            }).catch(err => console.error('Erro ao criar usuário:', err));
         } else if (modal.action === 'edit') {
             console.log("Editar usuário:", userData);
-            // Chamar API para editar
+            updateUser(modal.user.id, userData).then(() => {
+                // Lógica para atualizar a lista de usuários
+                setUserData(prev => ({
+                    ...prev,
+                    data: prev.data.map(user => user.id === modal.user.id ? userData : user)
+                }));
+            }).catch(err => console.error('Erro ao editar usuário:', err));
         }
         toggleModal();
     };
+
 
     const confirmDelete = () => {
         console.log("Deletar usuário:", modal.user);

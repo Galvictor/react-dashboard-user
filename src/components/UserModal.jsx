@@ -46,6 +46,32 @@ export default function UserModal({isOpen, toggle, onSave, userData, modalTitle}
                         />
                     </FormGroup>
                     <FormGroup>
+                        <Label for="password">Senha</Label>
+                        <Input
+                            type="password"
+                            id="password"
+                            name="password"
+                            value={formData.password || ''}
+                            onChange={handleChange}
+                            placeholder="Digite a senha"
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="funcao">Função</Label>
+                        <Input
+                            type="select"
+                            id="funcao"
+                            name="funcao"
+                            value={formData.funcao || ''}
+                            onChange={handleChange}
+                        >
+                            <option value="">Selecione uma função</option>
+                            <option value="admin">Admin</option>
+                            <option value="professor">Professor</option>
+                            <option value="aluno">Aluno</option>
+                        </Input>
+                    </FormGroup>
+                    <FormGroup>
                         <Label for="telefone">Telefone</Label>
                         <Input
                             type="tel"
