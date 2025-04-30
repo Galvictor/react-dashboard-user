@@ -1,10 +1,23 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import {Container, Card, CardHeader, CardBody, Row, Col, Button, Input, InputGroup} from 'reactstrap';
+import {
+    Container,
+    Card,
+    CardHeader,
+    CardBody,
+    Row,
+    Col,
+    Button,
+    Input,
+    InputGroup,
+    Modal,
+    ModalHeader, ModalBody, ModalFooter
+} from 'reactstrap';
 import UserTable from '../../components/UserTable';
 import UserPagination from '../../components/UserPagination';
+import UserModal from '../../components/UserModal';
 import {handleApiError} from '../../utils/formatters';
-import Permission from "../../components/Permission.jsx";
+import Permission from '../../components/Permission.jsx';
 
 export default function UsersList() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -12,7 +25,9 @@ export default function UsersList() {
     const [userData, setUserData] = useState({data: [], pagination: {}});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [modal, setModal] = useState({isOpen: false, user: null, action: null});
 
+    // Fetch users
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -32,9 +47,40 @@ export default function UsersList() {
         fetchUsers();
     }, [currentPage]);
 
+    const toggleModal = () => setModal({isOpen: !modal.isOpen, user: null, action: null});
+
     const handleSearch = (e) => {
         e.preventDefault();
         setCurrentPage(1);
+    };
+
+    const handleCreate = () => {
+        setModal({isOpen: true, user: null, action: 'create'});
+    };
+
+    const handleEdit = (user) => {
+        setModal({isOpen: true, user, action: 'edit'});
+    };
+
+    const handleDelete = (user) => {
+        setModal({isOpen: true, user, action: 'delete'});
+    };
+
+    const saveUser = (userData) => {
+        if (modal.action === 'create') {
+            console.log("Criar usuário:", userData);
+            // Chamar API para criar
+        } else if (modal.action === 'edit') {
+            console.log("Editar usuário:", userData);
+            // Chamar API para editar
+        }
+        toggleModal();
+    };
+
+    const confirmDelete = () => {
+        console.log("Deletar usuário:", modal.user);
+        // Chamar API para deletar
+        toggleModal();
     };
 
     return (
@@ -47,7 +93,7 @@ export default function UsersList() {
                         </Col>
                         <Col md={6} className="text-end">
                             <Permission roles={['admin']}>
-                                <Button color="primary">
+                                <Button color="primary" onClick={handleCreate}>
                                     <i className="bi bi-plus-circle me-2"/>
                                     Novo Usuário
                                 </Button>
@@ -78,8 +124,11 @@ export default function UsersList() {
                     {loading ? (
                         <div className="spinner-border text-primary"/>
                     ) : (
-                        <UserTable users={userData.data} onEdit={(user) => console.log('Editar:', user)}
-                                   onDelete={(user) => console.log('Deletar:', user)}/>
+                        <UserTable
+                            users={userData.data}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                        />
                     )}
 
                     <UserPagination
@@ -89,6 +138,32 @@ export default function UsersList() {
                     />
                 </CardBody>
             </Card>
+
+            {/* Modais */}
+            {modal.action !== 'delete' ? (
+                <UserModal
+                    isOpen={modal.isOpen}
+                    toggle={toggleModal}
+                    onSave={saveUser}
+                    userData={modal.user}
+                    modalTitle={modal.action === 'edit' ? 'Editar Usuário' : 'Criar Novo Usuário'}
+                />
+            ) : (
+                <Modal isOpen={modal.isOpen} toggle={toggleModal}>
+                    <ModalHeader toggle={toggleModal}>Confirmar Exclusão</ModalHeader>
+                    <ModalBody>
+                        Tem certeza que deseja excluir o usuário {modal.user?.nome}?
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="danger" onClick={confirmDelete}>
+                            Excluir
+                        </Button>
+                        <Button color="secondary" onClick={toggleModal}>
+                            Cancelar
+                        </Button>
+                    </ModalFooter>
+                </Modal>
+            )}
         </Container>
     );
 }
