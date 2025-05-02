@@ -82,7 +82,7 @@ export default function UsersList() {
                     }
                 }));
 
-                setCurrentPage(prev => Math.ceil((prev.pagination.totalItems + 1) / 5));
+                //setCurrentPage(prev => Math.ceil((prev.pagination.totalItems + 1) / 5));
 
             }).catch(err => console.error('Erro ao criar usuário:', err));
         } else if (modal.action === 'edit') {
