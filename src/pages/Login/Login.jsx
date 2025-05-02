@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {login} from '../../services/auth.jsx';
+import {useUser} from '../../services/UserContext'; // Importa o contexto
 import {
     Container,
     Form,
@@ -18,13 +19,14 @@ export default function Login() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const {setUserManual} = useUser(); // Usa o método para definir o usuário
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
         // Validação básica
         if (!email || !password) {
-            setError('Email e senha são obrigatórios');
+            setError('Email e senha são obrigatórios.');
             return;
         }
 
@@ -35,13 +37,15 @@ export default function Login() {
             const success = await login(email, password);
 
             if (success) {
-                navigate('/dashboard');
+                const savedUser = JSON.parse(sessionStorage.getItem('user')); // Pega o usuário do sessionStorage
+                setUserManual(savedUser); // Atualiza o contexto
+                navigate('/dashboard'); // Redireciona para o dashboard
             } else {
-                setError('Credenciais inválidas');
+                setError('Credenciais inválidas.');
             }
         } catch (error) {
             console.error('Erro ao logar:', error);
-            setError('Erro ao conectar com o servidor');
+            setError('Erro ao conectar com o servidor.');
         } finally {
             setLoading(false);
         }
@@ -60,7 +64,7 @@ export default function Login() {
                         id="email"
                         type="email"
                         value={email}
-                        onChange={e => setEmail(e.target.value)}
+                        onChange={(e) => setEmail(e.target.value)}
                         placeholder="Seu email"
                     />
                 </FormGroup>
@@ -71,7 +75,7 @@ export default function Login() {
                         type="password"
                         id="password"
                         value={password}
-                        onChange={e => setPassword(e.target.value)}
+                        onChange={(e) => setPassword(e.target.value)}
                         placeholder="Sua senha"
                     />
                 </FormGroup>

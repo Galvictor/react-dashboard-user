@@ -1,10 +1,20 @@
 import axios from 'axios';
-import {loginUser} from "./api.js";
+import {getUserProfile, loginUser} from "./api.js";
 
 // Criando uma variável para armazenar a função de navegação
 let navigate;
 
 let user = null;
+
+// Caching da role para evitar múltiplas chamadas desnecessárias
+let roleCache = null;
+
+// Cria uma função para notificar o contexto sobre o logout
+let onLogoutCallback = null;
+
+export const setOnLogoutCallback = (callback) => {
+    onLogoutCallback = callback;
+};
 
 // Função para configurar o navigate
 export const setNavigate = (navigateFunc) => {
@@ -60,9 +70,26 @@ export const getToken = () => {
     return sessionStorage.getItem('token');
 };
 
-export function getUserRole() {
-    return user?.funcao || null; // Retorna função do usuário
+export async function getUserRole() {
+    if (roleCache) {
+        return roleCache; // Retorna a role do cache se já estiver definida
+    }
+
+    try {
+        const userProfile = await getUserProfile(); // Chama o backend para buscar o perfil
+        if (!userProfile.success || !userProfile.data) {
+            throw new Error('Resposta inválida do backend');
+        }
+
+        roleCache = userProfile.data.funcao || null; // Armazena o papel (função) no cache
+        return roleCache;
+    } catch (error) {
+        console.error('Erro ao buscar a função do usuário:', error);
+        roleCache = null; // Limpa o cache em caso de erro
+        return null; // Em caso de erro, retorna null
+    }
 }
+
 
 export function getUserId() {
     return user?.id || null; // Retorna ID do usuário
@@ -71,9 +98,16 @@ export function getUserId() {
 
 export const logout = () => {
     user = null;
+    roleCache = null; // Limpa o cache da função do usuário
     sessionStorage.removeItem('auth');
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
+
+    // Notifica o contexto para resetar o estado
+    if (onLogoutCallback) {
+        onLogoutCallback();
+    }
+
 };
 
 // Configurando interceptor para tratar erros de autenticação
