@@ -1,6 +1,15 @@
 import {useEffect, useState} from 'react';
 import axios from '../services/api';
 import {useUser} from '../services/UserContext';
+import {
+    ListGroup,
+    ListGroupItem,
+    Spinner,
+    Container,
+    Row,
+    Col,
+} from 'reactstrap';
+import {BsPersonFill} from 'react-icons/bs';
 
 const ChatUserList = ({onUserSelect}) => {
     const [users, setUsers] = useState([]);
@@ -8,7 +17,7 @@ const ChatUserList = ({onUserSelect}) => {
     const {user} = useUser(); // Obtemos o usuário autenticado pelo contexto
 
     useEffect(() => {
-        if (!user?.email) return; // só executa quando user.email estiver disponíve
+        if (!user?.email) return;
 
         const fetchUsers = async () => {
             try {
@@ -27,17 +36,39 @@ const ChatUserList = ({onUserSelect}) => {
     }, [user?.email]);
 
     if (loading) {
-        return <p>Carregando lista de usuários...</p>;
+        return (
+            <Container className="text-center">
+                <Spinner color="primary"/>
+                <p>Carregando lista de usuários...</p>
+            </Container>
+        );
+    }
+
+    if (!users.length) {
+        return <p className="text-center text-muted">Nenhum usuário disponível</p>;
     }
 
     return (
-        <ul>
+        <ListGroup flush className="shadow-sm">
             {users.map((userItem) => (
-                <li key={userItem.id} onClick={() => onUserSelect(userItem.email)}>
-                    <strong>{userItem.nome}</strong> <span>({userItem.funcao})</span>
-                </li>
+                <ListGroupItem
+                    key={userItem.id}
+                    className="d-flex align-items-center justify-content-between user-list-item"
+                    onClick={() => onUserSelect(userItem.email)}
+                    action
+                >
+                    <Row className="align-items-center w-100">
+                        <Col xs="auto">
+                            <BsPersonFill size={24} className="text-primary"/>
+                        </Col>
+                        <Col>
+                            <h6 className="mb-0">{userItem.nome}</h6>
+                            <small className="text-muted">{userItem.funcao}</small>
+                        </Col>
+                    </Row>
+                </ListGroupItem>
             ))}
-        </ul>
+        </ListGroup>
     );
 };
 

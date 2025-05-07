@@ -7,17 +7,35 @@ body {
 .chat-messages {
   height: 400px;
   overflow-y: auto;
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 1rem;
+
+  /* Ideal para barras de rolagem modernas */
+  scrollbar-width: thin;
+  scrollbar-color: #017bff #f1f1f1;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #017bff;
+    border-radius: 10px;
+  }
 }
 
-input.chat-input {
-  width: 80%;
-  padding: 8px;
+.chat-input {
+  border-radius: 0.25rem;
 }
 
-button.chat-button {
-  padding: 8px 16px;
-  margin-left: 10px;
+.chat-button {
+  border-radius: 0.25rem;
+}
+
+.user-list-item {
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f8f9fa;
+    transition: background 0.3s;
+  }
 }

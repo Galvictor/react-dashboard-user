@@ -1,6 +1,21 @@
 import {useEffect, useRef, useState} from 'react';
 import io from 'socket.io-client';
 import {useUser} from '../services/UserContext';
+import {
+    Container,
+    Card,
+    CardHeader,
+    CardBody,
+    Input,
+    InputGroup,
+    Button,
+    ListGroup,
+    ListGroupItem,
+    Spinner,
+    Row,
+    Col,
+} from 'reactstrap';
+import {BsSend, BsPersonCircle} from 'react-icons/bs';
 
 const ChatRoom = ({selectedUser}) => {
     const [messages, setMessages] = useState([]);
@@ -26,7 +41,6 @@ const ChatRoom = ({selectedUser}) => {
         });
 
         socket.on('user_typing', ({name}) => {
-            console.log(`${name} está digitando...`);
             setTypingUser(name);
             setTimeout(() => setTypingUser(null), 2000);
         });
@@ -63,26 +77,56 @@ const ChatRoom = ({selectedUser}) => {
     };
 
     return (
-        <div>
-            <h3>Chat com: {selectedUser}</h3>
-            <div className="chat-messages">
-                {messages.map((msg, index) => (
-                    <div key={index}>
-                        <strong>{msg.from === user.email ? 'Você' : msg.name}</strong>: {msg.message}
+        <Container>
+            <Card className="shadow">
+                <CardHeader className="bg-primary text-white d-flex align-items-center">
+                    <BsPersonCircle className="me-2" size={24}/>
+                    <h5 className="mb-0">Chat com: {selectedUser || 'Usuário Desconhecido'}</h5>
+                </CardHeader>
+                <CardBody>
+                    <div className="chat-messages">
+                        <ListGroup className="mb-3">
+                            {messages.map((msg, index) => (
+                                <ListGroupItem
+                                    key={index}
+                                    className={`d-flex ${
+                                        msg.from === user.email ? 'justify-content-end' : 'justify-content-start'
+                                    }`}
+                                >
+                                    <div
+                                        className={`p-2 rounded ${
+                                            msg.from === user.email ? 'bg-primary text-white' : 'bg-light'
+                                        }`}
+                                        style={{maxWidth: '75%'}}
+                                    >
+                                        <strong>{msg.from === user.email ? 'Você' : msg.name}</strong>: {msg.message}
+                                    </div>
+                                </ListGroupItem>
+                            ))}
+                            {typingUser && (
+                                <ListGroupItem className="text-muted small">
+                                    {typingUser} está digitando...
+                                </ListGroupItem>
+                            )}
+                        </ListGroup>
                     </div>
-                ))}
-                {typingUser && <p>{typingUser} está digitando...</p>}
-            </div>
-            <input
-                type="text"
-                className="chat-input"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={handleTyping}
-                placeholder="Digite sua mensagem..."
-            />
-            <button className="chat-button" onClick={sendMessage}>Enviar</button>
-        </div>
+
+                    <InputGroup>
+                        <Input
+                            type="text"
+                            className="chat-input"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            onKeyDown={handleTyping}
+                            placeholder="Digite sua mensagem..."
+                        />
+                        <Button color="primary" onClick={sendMessage} disabled={!message.trim()}>
+                            <BsSend/>
+                        </Button>
+                    </InputGroup>
+                </CardBody>
+            </Card>
+        </Container>
     );
 };
 
