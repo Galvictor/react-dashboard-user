@@ -1,15 +1,17 @@
 import {useEffect, useState} from 'react';
 import io from 'socket.io-client';
+import {useUser} from '../services/UserContext';
 
-const ChatRoom = ({userEmail, selectedUser}) => {
-    const [socket, setSocket] = useState(null);
+const ChatRoom = ({selectedUser}) => {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState('');
-    const [isTyping, setIsTyping] = useState(false);
+    const [socket, setSocket] = useState(null);
+    const [typingUser, setTypingUser] = useState(null);
+    const {user} = useUser(); // Obtém informações do usuário logado
 
     useEffect(() => {
         const newSocket = io('http://localhost:3000', {
-            auth: {token: sessionStorage.getItem('token')}, // Obtém o token do armazenamento local
+            auth: {token: sessionStorage.getItem('token')},
         });
 
         setSocket(newSocket);
@@ -22,9 +24,9 @@ const ChatRoom = ({userEmail, selectedUser}) => {
             setMessages((prevMessages) => [...prevMessages, data]);
         });
 
-        newSocket.on('user_typing', (data) => {
-            setIsTyping(true);
-            setTimeout(() => setIsTyping(false), 2000);
+        newSocket.on('user_typing', ({name}) => {
+            setTypingUser(name);
+            setTimeout(() => setTypingUser(null), 2000);
         });
 
         return () => newSocket.disconnect();
@@ -43,10 +45,11 @@ const ChatRoom = ({userEmail, selectedUser}) => {
                 message: message.trim(),
             });
 
+            // Adiciona a mensagem localmente enquanto envia para o servidor
             setMessages((prevMessages) => [
                 ...prevMessages,
                 {
-                    from: userEmail,
+                    from: user.email,
                     to: selectedUser,
                     message: message.trim(),
                     timestamp: new Date().toISOString(),
@@ -69,18 +72,18 @@ const ChatRoom = ({userEmail, selectedUser}) => {
             <div className="chat-messages">
                 {messages.map((msg, index) => (
                     <div key={index}>
-                        <strong>{msg.from === userEmail ? 'Você' : 'Outro'}</strong>: {msg.message}
+                        <strong>{msg.from === user.email ? 'Você' : msg.name}</strong>: {msg.message}
                     </div>
                 ))}
-                {isTyping && <p>Usuário está digitando...</p>}
+                {typingUser && <p>{typingUser} está digitando...</p>}
             </div>
             <input
                 type="text"
                 className="chat-input"
-                placeholder="Digite sua mensagem..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                onKeyPress={handleTyping}
+                onKeyDown={handleTyping}
+                placeholder="Digite sua mensagem..."
             />
             <button className="chat-button" onClick={sendMessage}>Enviar</button>
         </div>

@@ -1,10 +1,15 @@
 import {useState} from 'react';
 import ChatUserList from '../../components/ChatUserList';
 import ChatRoom from '../../components/ChatRoom';
+import {useUser} from '../../services/UserContext';
 
 const ChatPage = () => {
+    const {user} = useUser(); // Obtendo as informações do usuário logado
     const [selectedUser, setSelectedUser] = useState(null);
-    const userEmail = 'seu.email@dominio.com'; // Troque isso para obter o email do usuário logado
+
+    if (!user) {
+        return <p>Carregando dados do usuário...</p>;
+    }
 
     return (
         <div style={{display: 'flex'}}>
@@ -14,7 +19,7 @@ const ChatPage = () => {
             </div>
             <div style={{width: '70%'}}>
                 {selectedUser ? (
-                    <ChatRoom userEmail={userEmail} selectedUser={selectedUser}/>
+                    <ChatRoom selectedUser={selectedUser}/>
                 ) : (
                     <p>Selecione um usuário para iniciar o chat</p>
                 )}
