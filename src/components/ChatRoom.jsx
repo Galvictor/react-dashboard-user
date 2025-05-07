@@ -1,68 +1,64 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import io from 'socket.io-client';
 import {useUser} from '../services/UserContext';
 
 const ChatRoom = ({selectedUser}) => {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState('');
-    const [socket, setSocket] = useState(null);
     const [typingUser, setTypingUser] = useState(null);
-    const {user} = useUser(); // Obtém informações do usuário logado
+    const {user} = useUser();
+    const socketRef = useRef(null);
 
     useEffect(() => {
-        const newSocket = io('http://localhost:3000', {
-            auth: {token: sessionStorage.getItem('token')},
+        const token = sessionStorage.getItem('token');
+        if (!token || socketRef.current) return;
+
+        const socket = io('http://localhost:3000', {
+            auth: {token},
         });
 
-        setSocket(newSocket);
-
-        newSocket.on('connect', () => {
-            console.log('Conectado ao servidor');
+        socket.on('connect', () => {
+            console.log('🔌 Conectado ao servidor');
         });
 
-        newSocket.on('receive_private_message', (data) => {
+        socket.on('receive_private_message', (data) => {
             setMessages((prevMessages) => [...prevMessages, data]);
         });
 
-        newSocket.on('user_typing', ({name}) => {
+        socket.on('user_typing', ({name}) => {
+            console.log(`${name} está digitando...`);
             setTypingUser(name);
             setTimeout(() => setTypingUser(null), 2000);
         });
 
-        return () => newSocket.disconnect();
+        socketRef.current = socket;
+
+        return () => {
+            socket.disconnect();
+            socketRef.current = null;
+        };
     }, []);
 
     useEffect(() => {
-        if (socket && selectedUser) {
-            socket.emit('join_private_room', {to: selectedUser});
+        if (socketRef.current && selectedUser) {
+            socketRef.current.emit('join_private_room', {to: selectedUser});
         }
-    }, [socket, selectedUser]);
+    }, [selectedUser]);
 
     const sendMessage = () => {
-        if (message.trim() && socket) {
-            socket.emit('send_private_message', {
+        if (message.trim() && socketRef.current) {
+            socketRef.current.emit('send_private_message', {
                 to: selectedUser,
                 message: message.trim(),
             });
-
-            // Adiciona a mensagem localmente enquanto envia para o servidor
-            setMessages((prevMessages) => [
-                ...prevMessages,
-                {
-                    from: user.email,
-                    to: selectedUser,
-                    message: message.trim(),
-                    timestamp: new Date().toISOString(),
-                },
-            ]);
 
             setMessage('');
         }
     };
 
     const handleTyping = () => {
-        if (socket) {
-            socket.emit('typing', {to: selectedUser});
+        if (socketRef.current) {
+            socketRef.current.emit('typing', {to: selectedUser});
         }
     };
 
