@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { getUserProfile } from './api.js';
-import { setOnLogoutCallback } from './auth';
+import React, {createContext, useContext, useEffect, useState, useCallback} from 'react';
+import {getUserProfile} from './api.js';
+import {setOnLogoutCallback} from './auth';
 
 const UserContext = createContext();
 
-export function UserProvider({ children }) {
+export function UserProvider({children}) {
     const [user, setUser] = useState(null); // Estado do usuário
     const [loading, setLoading] = useState(true); // Controle de carregamento
 
@@ -43,7 +43,7 @@ export function UserProvider({ children }) {
     };
 
     return (
-        <UserContext.Provider value={{ user, loading, fetchUserData, setUserManual }}>
+        <UserContext.Provider value={{user, loading, fetchUserData, setUserManual}}>
             {children}
         </UserContext.Provider>
     );

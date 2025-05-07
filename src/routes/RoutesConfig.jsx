@@ -4,6 +4,7 @@ import UsersList from '../pages/Users/UsersList';
 import Profile from '../pages/Profile/Profile';
 import DashboardHome from '../pages/Dashboard/DashboardHome';
 import ProtectedRoute from './ProtectedRoute';
+import ChatPage from "../pages/Chat/ChatPage";
 
 export const appRoutes = [
     {
@@ -29,6 +30,10 @@ export const appRoutes = [
                         <UsersList/>
                     </ProtectedRoute>
                 ),
+            },
+            {
+                path: 'chat',
+                element: <ChatPage/>,
             },
             {
                 path: 'profile',

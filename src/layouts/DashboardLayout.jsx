@@ -33,6 +33,12 @@ export default function DashboardLayout() {
                     </Permission>
 
                     {/* Link visível para todos */}
+                    <Link to="/dashboard/chat" className="nav-link text-white">
+                        <i className="bi bi-person-circle me-2"/>
+                        Chat
+                    </Link>
+
+                    {/* Link visível para todos */}
                     <Link to="/dashboard/profile" className="nav-link text-white">
                         <i className="bi bi-person-circle me-2"/>
                         Meu Perfil

@@ -3,3 +3,21 @@
 body {
   background-color: #f8f9fa;
 }
+
+.chat-messages {
+  height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+input.chat-input {
+  width: 80%;
+  padding: 8px;
+}
+
+button.chat-button {
+  padding: 8px 16px;
+  margin-left: 10px;
+}
