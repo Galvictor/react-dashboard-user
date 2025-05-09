@@ -11,16 +11,16 @@ import {
     Button,
     ListGroup,
     ListGroupItem,
-    Spinner,
     Row,
     Col,
 } from 'reactstrap';
-import {BsSend, BsPersonCircle} from 'react-icons/bs';
+import {BsSend, BsPersonCircle, BsXCircle} from 'react-icons/bs'; // Adicionei o ícone de "fechar"
 
-const ChatRoom = ({selectedUser}) => {
+const ChatRoom = ({selectedUser, onCloseChat}) => { // Adicioanei a prop `onCloseChat`
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState('');
     const [typingUser, setTypingUser] = useState(null);
+    const [userInRoom, setUserInRoom] = useState(false); // Estado para verificar se usuário entrou/saiu da sala
     const {user} = useUser();
     const socketRef = useRef(null);
 
@@ -45,10 +45,22 @@ const ChatRoom = ({selectedUser}) => {
             setTimeout(() => setTypingUser(null), 2000);
         });
 
+        // Lidar com usuário entrando na sala
+        socket.on('usuario_entrou_na_sala', ({nome}) => {
+            setUserInRoom(true);
+            console.log(`${nome} entrou na sala`);
+        });
+
+        // Lidar com usuário saindo da sala
+        socket.on('usuario_saiu_da_sala', ({nome}) => {
+            setUserInRoom(false);
+            console.log(`${nome} saiu da sala`);
+        });
+
         socketRef.current = socket;
 
         return () => {
-            socket.disconnect();
+            if (socketRef.current) socket.disconnect();
             socketRef.current = null;
         };
     }, []);
@@ -57,6 +69,11 @@ const ChatRoom = ({selectedUser}) => {
         if (socketRef.current && selectedUser) {
             socketRef.current.emit('join_private_room', {to: selectedUser});
         }
+        return () => {
+            if (socketRef.current && selectedUser) {
+                socketRef.current.emit('leave_private_room', {to: selectedUser});
+            }
+        };
     }, [selectedUser]);
 
     const sendMessage = () => {
@@ -79,9 +96,22 @@ const ChatRoom = ({selectedUser}) => {
     return (
         <Container>
             <Card className="shadow">
-                <CardHeader className="bg-primary text-white d-flex align-items-center">
-                    <BsPersonCircle className="me-2" size={24}/>
-                    <h5 className="mb-0">Chat com: {selectedUser || 'Usuário Desconhecido'}</h5>
+                <CardHeader className="bg-primary text-white d-flex align-items-center justify-content-between">
+                    <div className="d-flex align-items-center">
+                        <BsPersonCircle className="me-2" size={24}/>
+                        <h5 className="mb-0">Chat com: {selectedUser || 'Usuário Desconhecido'}</h5>
+                    </div>
+                    {/* Botão para fechar o chat */}
+                    <BsXCircle
+                        size={24}
+                        className="cursor-pointer text-white"
+                        onClick={() => {
+                            if (socketRef.current && selectedUser) {
+                                socketRef.current.emit('leave_private_room', {to: selectedUser}); // Emitimos o evento para sair da sala
+                            }
+                            onCloseChat(); // Chamamos a função para "fechar" o chat
+                        }}
+                    />
                 </CardHeader>
                 <CardBody>
                     <div className="chat-messages">
@@ -106,6 +136,16 @@ const ChatRoom = ({selectedUser}) => {
                             {typingUser && (
                                 <ListGroupItem className="text-muted small">
                                     {typingUser} está digitando...
+                                </ListGroupItem>
+                            )}
+                            {userInRoom && (
+                                <ListGroupItem className="text-success small">
+                                    {selectedUser} está na sala
+                                </ListGroupItem>
+                            )}
+                            {!userInRoom && (
+                                <ListGroupItem className="text-muted small">
+                                    {selectedUser} saiu da sala
                                 </ListGroupItem>
                             )}
                         </ListGroup>

@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useRef} from 'react';
 import axios from '../services/api';
 import {useUser} from '../services/UserContext';
 import {
@@ -10,15 +10,19 @@ import {
     Col,
 } from 'reactstrap';
 import {BsPersonFill} from 'react-icons/bs';
+import io from 'socket.io-client';
 
 const ChatUserList = ({onUserSelect}) => {
     const [users, setUsers] = useState([]);
+    const [onlineUsers, setOnlineUsers] = useState(new Set()); // Para rastrear usuários online
     const [loading, setLoading] = useState(true);
     const {user} = useUser(); // Obtemos o usuário autenticado pelo contexto
+    const socketRef = useRef(null);
 
     useEffect(() => {
         if (!user?.email) return;
 
+        const token = sessionStorage.getItem('token');
         const fetchUsers = async () => {
             try {
                 const response = await axios.get('/users/chat-list');
@@ -32,7 +36,28 @@ const ChatUserList = ({onUserSelect}) => {
                 setLoading(false);
             }
         };
+
+        // Configuração do socket
+        socketRef.current = io('http://localhost:3000', {auth: {token}});
+
+        socketRef.current.on('usuario_online', ({email}) => {
+            setOnlineUsers((prev) => new Set(prev).add(email));
+        });
+
+        socketRef.current.on('usuario_offline', ({email}) => {
+            setOnlineUsers((prev) => {
+                const updated = new Set(prev);
+                updated.delete(email);
+                return updated;
+            });
+        });
+
         fetchUsers();
+
+        return () => {
+            socketRef.current.disconnect();
+            socketRef.current = null;
+        };
     }, [user?.email]);
 
     if (loading) {
@@ -53,7 +78,9 @@ const ChatUserList = ({onUserSelect}) => {
             {users.map((userItem) => (
                 <ListGroupItem
                     key={userItem.id}
-                    className="d-flex align-items-center justify-content-between user-list-item"
+                    className={`d-flex align-items-center justify-content-between user-list-item ${
+                        onlineUsers.has(userItem.email) ? 'text-success' : 'text-muted'
+                    }`}
                     onClick={() => onUserSelect(userItem.email)}
                     action
                 >
@@ -63,7 +90,7 @@ const ChatUserList = ({onUserSelect}) => {
                         </Col>
                         <Col>
                             <h6 className="mb-0">{userItem.nome}</h6>
-                            <small className="text-muted">{userItem.funcao}</small>
+                            <small>{onlineUsers.has(userItem.email) ? 'Online' : 'Offline'}</small>
                         </Col>
                     </Row>
                 </ListGroupItem>

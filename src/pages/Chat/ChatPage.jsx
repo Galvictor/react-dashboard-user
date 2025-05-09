@@ -19,11 +19,15 @@ const ChatPage = () => {
             </div>
             <div style={{width: '70%'}}>
                 {selectedUser ? (
-                    <ChatRoom selectedUser={selectedUser}/>
+                    <ChatRoom
+                        selectedUser={selectedUser}
+                        onCloseChat={() => setSelectedUser(null)} // Reseta o selecionado ao fechar o chat
+                    />
                 ) : (
                     <p>Selecione um usuário para iniciar o chat</p>
                 )}
             </div>
+
         </div>
     );
 };
