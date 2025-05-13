@@ -6,13 +6,13 @@ import {FormGroup, Label, Input} from 'reactstrap';
 import io from 'socket.io-client';
 
 const ChatPage = () => {
-    const {user} = useUser(); // Obtemos as informações do usuário logado
-    const [selectedUser, setSelectedUser] = useState(null); // Usuário selecionado no chat
-    const [status, setStatus] = useState('online'); // Estado para controlar se o usuário está online/offline
-    const [onlineUsers, setOnlineUsers] = useState(new Set()); // Estado global para rastrear usuários online
-    const socketRef = useRef(null);
+    const {user} = useUser(); // Usuário autenticado no sistema
+    const [selectedUser, setSelectedUser] = useState(null); // Usuário selecionado para o chat
+    const [status, setStatus] = useState('online'); // Controle do status do usuário atual (online/offline)
+    const [onlineUsers, setOnlineUsers] = useState(new Set()); // Lista global de usuários online
+    const socketRef = useRef(null); // Instância do WebSocket
 
-    // Configuração inicial do WebSocket
+    // Conectar ao WebSocket e configurar eventos
     useEffect(() => {
         const token = sessionStorage.getItem('token');
         if (!token) return;
@@ -23,15 +23,18 @@ const ChatPage = () => {
             console.log('🔌 Conectado ao servidor');
         });
 
-        // Lidar com eventos de outros usuários ficando online/offline
+        // Escuta os eventos de outros usuários que ficam online
         socketRef.current.on('usuario_online', ({email}) => {
-            setOnlineUsers((prev) => new Set([...prev, email]));
+            console.log(`${email} ficou Online`);
+            setOnlineUsers((prev) => new Set([...prev, email])); // Adiciona à lista de usuários online
         });
 
+        // Escuta os eventos de outros usuários que saem ou ficam offline
         socketRef.current.on('usuario_offline', ({email}) => {
+            console.log(`${email} ficou Offline`);
             setOnlineUsers((prev) => {
                 const updated = new Set(prev);
-                updated.delete(email);
+                updated.delete(email); // Remove da lista de usuários online
                 return updated;
             });
         });
@@ -41,16 +44,18 @@ const ChatPage = () => {
         };
     }, []);
 
-    // Atualizar o status online/offline do usuário logado
+    // Atualizar o status do usuário atual e notificar o backend via WebSocket
     useEffect(() => {
         if (!socketRef.current || !user) return;
 
         if (status === 'online') {
+            // Ao mudar para "online", emitir evento `usuario_online`
             socketRef.current.emit('usuario_online', {
                 email: user.email,
                 nome: user.nome,
             });
         } else if (status === 'offline') {
+            // Ao mudar para "offline", emitir evento `usuario_offline`
             socketRef.current.emit('usuario_offline', {
                 email: user.email,
                 nome: user.nome,
@@ -58,7 +63,7 @@ const ChatPage = () => {
         }
 
         return () => {
-            // Emitir offline ao desmontar o componente ou desconectar
+            // Emitir `offline` ao desmontar ou desconectar
             if (socketRef.current) {
                 socketRef.current.emit('usuario_offline', {
                     email: user.email,
@@ -68,7 +73,7 @@ const ChatPage = () => {
         };
     }, [status, user]);
 
-    // Lidar com a mudança do status do usuário logado
+    // Mudar o status do usuário atual
     const handleStatusChange = (e) => {
         setStatus(e.target.value);
     };
@@ -93,20 +98,20 @@ const ChatPage = () => {
                 </Input>
             </FormGroup>
 
-            {/* Chat Layout */}
+            {/* Layout da Página de Chat */}
             <div style={{display: 'flex', flex: 1}}>
                 <div style={{width: '30%'}}>
                     <h3>Usuários Disponíveis</h3>
                     <ChatUserList
                         onUserSelect={(email) => setSelectedUser(email)}
-                        onlineUsers={onlineUsers} // Passamos apenas os usuários online via prop
+                        onlineUsers={onlineUsers} // Passamos os usuários online como prop
                     />
                 </div>
                 <div style={{width: '70%'}}>
                     {selectedUser ? (
                         <ChatRoom
                             selectedUser={selectedUser}
-                            onCloseChat={() => setSelectedUser(null)} // Reseta o selecionado ao fechar o chat
+                            onCloseChat={() => setSelectedUser(null)} // Limpa usuário selecionado ao fechar
                         />
                     ) : (
                         <p>Selecione um usuário para iniciar o chat</p>
