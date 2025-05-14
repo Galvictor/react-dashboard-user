@@ -24,22 +24,24 @@ const ChatRoom = ({selectedUser, onCloseChat}) => { // Adicioanei a prop `onClos
     const [userInRoom, setUserInRoom] = useState(false); // Estado para verificar se usuário entrou/saiu da sala
     const {user} = useUser();
     const socketRef = useRef(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     // Nova função para buscar o histórico de mensagens
     const fetchMessageHistory = async () => {
+        if (isLoading) return; // Evita chamadas duplicadas
+
+        setIsLoading(true);
         try {
             const roomId = `${user?.email}-${selectedUser}`;
-
             const response = await getRoomHistory(roomId);
 
-            console.log(response);
-
             if (response) {
-                setMessages(response); // Atualiza o estado com o histórico de mensagens
+                setMessages(response);
             }
-
         } catch (error) {
             console.error('Erro ao buscar histórico de mensagens:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
