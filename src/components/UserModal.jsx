@@ -73,104 +73,110 @@ export default function UserModal({isOpen, toggle, onSave, userData, modalTitle}
             <ModalHeader toggle={toggle}>{modalTitle}</ModalHeader>
             <ModalBody>
                 <Form>
-                    <FormGroup>
-                        <Label for="nome">Nome</Label>
-                        <Input
-                            type="text"
-                            id="nome"
-                            name="nome"
-                            value={formData.nome || ''}
-                            onChange={handleChange}
-                            placeholder="Digite o nome"
-                            invalid={!!errors.nome}
-                        />
-                        <FormFeedback>Este campo é obrigatório.</FormFeedback>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="email">Email</Label>
-                        <Input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={formData.email || ''}
-                            onChange={handleChange}
-                            placeholder="Digite o email"
-                            invalid={!!errors.email}
-                        />
-                        <FormFeedback>Este campo é obrigatório.</FormFeedback>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="password">Senha</Label>
-                        <Input
-                            type="password"
-                            id="password"
-                            name="password"
-                            value={formData.password || ''}
-                            onChange={handleChange}
-                            placeholder="Digite a senha"
-                            invalid={!!errors.password}
-                        />
-                        <FormFeedback>Este campo é obrigatório.</FormFeedback>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="confirmPassword">Confirme a Senha</Label>
-                        <Input
-                            type="password"
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            value={formData.confirmPassword || ''}
-                            onChange={handleChange}
-                            placeholder="Confirme a senha"
-                            invalid={!!errors.confirmPassword}
-                        />
-                        <FormFeedback>
-                            {formData.confirmPassword !== formData.password
-                                ? 'As senhas não coincidem.'
-                                : 'Este campo é obrigatório.'}
-                        </FormFeedback>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="funcao">Função</Label>
-                        <Input
-                            type="select"
-                            id="funcao"
-                            name="funcao"
-                            value={formData.funcao || ''}
-                            onChange={handleChange}
-                            invalid={!!errors.funcao}
-                        >
-                            <option value="">Selecione uma função</option>
-                            <option value="admin">Admin</option>
-                            <option value="professor">Professor</option>
-                            <option value="aluno">Aluno</option>
-                        </Input>
-                        <FormFeedback>Este campo é obrigatório.</FormFeedback>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="telefone">Telefone</Label>
-                        <Input
-                            type="tel"
-                            id="telefone"
-                            name="telefone"
-                            value={formData.telefone || ''}
-                            onChange={handleChange}
-                            placeholder="Digite o telefone"
-                            invalid={!!errors.telefone}
-                        />
-                        <FormFeedback>Este campo é obrigatório.</FormFeedback>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="dataNascimento">Data de Nascimento</Label>
-                        <Input
-                            type="date"
-                            id="dataNascimento"
-                            name="dataNascimento"
-                            value={formData.dataNascimento || ''}
-                            onChange={handleChange}
-                            invalid={!!errors.dataNascimento}
-                        />
-                        <FormFeedback>Este campo é obrigatório.</FormFeedback>
-                    </FormGroup>
+                    <div className="row">
+                        <div className="col-md-6">
+                            <FormGroup>
+                                <Label for="nome">Nome</Label>
+                                <Input
+                                    type="text"
+                                    id="nome"
+                                    name="nome"
+                                    value={formData.nome || ''}
+                                    onChange={handleChange}
+                                    placeholder="Digite o nome"
+                                    invalid={!!errors.nome}
+                                />
+                                <FormFeedback>Este campo é obrigatório.</FormFeedback>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="email">Email</Label>
+                                <Input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    value={formData.email || ''}
+                                    onChange={handleChange}
+                                    placeholder="Digite o email"
+                                    invalid={!!errors.email}
+                                />
+                                <FormFeedback>Este campo é obrigatório.</FormFeedback>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="password">Senha</Label>
+                                <Input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    value={formData.password || ''}
+                                    onChange={handleChange}
+                                    placeholder="Digite a senha"
+                                    invalid={!!errors.password}
+                                />
+                                <FormFeedback>Este campo é obrigatório.</FormFeedback>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="confirmPassword">Confirme a Senha</Label>
+                                <Input
+                                    type="password"
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    value={formData.confirmPassword || ''}
+                                    onChange={handleChange}
+                                    placeholder="Confirme a senha"
+                                    invalid={!!errors.confirmPassword}
+                                />
+                                <FormFeedback>
+                                    {formData.confirmPassword !== formData.password
+                                        ? 'As senhas não coincidem.'
+                                        : 'Este campo é obrigatório.'}
+                                </FormFeedback>
+                            </FormGroup>
+                        </div>
+                        <div className="col-md-6">
+                            <FormGroup>
+                                <Label for="funcao">Função</Label>
+                                <Input
+                                    type="select"
+                                    id="funcao"
+                                    name="funcao"
+                                    value={formData.funcao || ''}
+                                    onChange={handleChange}
+                                    invalid={!!errors.funcao}
+                                >
+                                    <option value="">Selecione uma função</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="professor">Professor</option>
+                                    <option value="aluno">Aluno</option>
+                                </Input>
+                                <FormFeedback>Este campo é obrigatório.</FormFeedback>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="telefone">Telefone</Label>
+                                <Input
+                                    type="tel"
+                                    id="telefone"
+                                    name="telefone"
+                                    value={formData.telefone || ''}
+                                    onChange={handleChange}
+                                    placeholder="Digite o telefone"
+                                    invalid={!!errors.telefone}
+                                />
+                                <FormFeedback>Este campo é obrigatório.</FormFeedback>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="dataNascimento">Data de Nascimento</Label>
+                                <Input
+                                    type="date"
+                                    id="dataNascimento"
+                                    name="dataNascimento"
+                                    value={formData.dataNascimento || ''}
+                                    onChange={handleChange}
+                                    invalid={!!errors.dataNascimento}
+                                />
+                                <FormFeedback>Este campo é obrigatório.</FormFeedback>
+                            </FormGroup>
+                        </div>
+                    </div>
                 </Form>
             </ModalBody>
             <ModalFooter>
