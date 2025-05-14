@@ -11,24 +11,22 @@ import {
     Button,
     ListGroup,
     ListGroupItem,
-    Row,
-    Col,
+    Spinner
 } from 'reactstrap';
 import {BsSend, BsPersonCircle, BsXCircle} from 'react-icons/bs';
-import {getRoomHistory} from "../services/api.js"; // Adicionei o ícone de "fechar"
+import {getRoomHistory} from "../services/api.js";
 
-const ChatRoom = ({selectedUser, onCloseChat}) => { // Adicioanei a prop `onCloseChat`
+const ChatRoom = ({selectedUser, onCloseChat}) => {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState('');
     const [typingUser, setTypingUser] = useState(null);
-    const [userInRoom, setUserInRoom] = useState(false); // Estado para verificar se usuário entrou/saiu da sala
+    const [userInRoom, setUserInRoom] = useState(false);
     const {user} = useUser();
     const socketRef = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Nova função para buscar o histórico de mensagens
     const fetchMessageHistory = async () => {
-        if (isLoading) return; // Evita chamadas duplicadas
+        if (isLoading) return;
 
         setIsLoading(true);
         try {
@@ -66,13 +64,11 @@ const ChatRoom = ({selectedUser, onCloseChat}) => { // Adicioanei a prop `onClos
             setTimeout(() => setTypingUser(null), 2000);
         });
 
-        // Lidar com usuário entrando na sala
         socket.on('usuario_entrou_na_sala', ({nome}) => {
             setUserInRoom(true);
             console.log(`${nome} entrou na sala`);
         });
 
-        // Lidar com usuário saindo da sala
         socket.on('usuario_saiu_da_sala', ({nome}) => {
             setUserInRoom(false);
             console.log(`${nome} saiu da sala`);
@@ -123,54 +119,61 @@ const ChatRoom = ({selectedUser, onCloseChat}) => { // Adicioanei a prop `onClos
                         <BsPersonCircle className="me-2" size={24}/>
                         <h5 className="mb-0">Chat com: {selectedUser || 'Usuário Desconhecido'}</h5>
                     </div>
-                    {/* Botão para fechar o chat */}
                     <BsXCircle
                         size={24}
                         className="cursor-pointer text-white"
                         onClick={() => {
                             if (socketRef.current && selectedUser) {
-                                socketRef.current.emit('leave_private_room', {to: selectedUser}); // Emitimos o evento para sair da sala
+                                socketRef.current.emit('leave_private_room', {to: selectedUser});
                             }
-                            onCloseChat(); // Chamamos a função para "fechar" o chat
+                            onCloseChat();
                         }}
                     />
                 </CardHeader>
                 <CardBody>
                     <div className="chat-messages">
-                        <ListGroup className="mb-3">
-                            {messages.map((msg, index) => (
-                                <ListGroupItem
-                                    key={index}
-                                    className={`d-flex ${
-                                        msg.from === user.email ? 'justify-content-end' : 'justify-content-start'
-                                    }`}
-                                >
-                                    <div
-                                        className={`p-2 rounded ${
-                                            msg.from === user.email ? 'bg-primary text-white' : 'bg-light'
+                        {isLoading ? (
+                            <div className="d-flex justify-content-center align-items-center p-4">
+                                <Spinner color="primary">
+                                    Carregando...
+                                </Spinner>
+                            </div>
+                        ) : (
+                            <ListGroup className="mb-3">
+                                {messages.map((msg, index) => (
+                                    <ListGroupItem
+                                        key={index}
+                                        className={`d-flex ${
+                                            msg.from === user.email ? 'justify-content-end' : 'justify-content-start'
                                         }`}
-                                        style={{maxWidth: '75%'}}
                                     >
-                                        <strong>{msg.from === user.email ? 'Você' : msg.name}</strong>: {msg.message}
-                                    </div>
-                                </ListGroupItem>
-                            ))}
-                            {typingUser && (
-                                <ListGroupItem className="text-muted small">
-                                    {typingUser} está digitando...
-                                </ListGroupItem>
-                            )}
-                            {userInRoom && (
-                                <ListGroupItem className="text-success small">
-                                    {selectedUser} está na sala
-                                </ListGroupItem>
-                            )}
-                            {!userInRoom && (
-                                <ListGroupItem className="text-muted small">
-                                    {selectedUser} saiu da sala
-                                </ListGroupItem>
-                            )}
-                        </ListGroup>
+                                        <div
+                                            className={`p-2 rounded ${
+                                                msg.from === user.email ? 'bg-primary text-white' : 'bg-light'
+                                            }`}
+                                            style={{maxWidth: '75%'}}
+                                        >
+                                            <strong>{msg.from === user.email ? 'Você' : msg.name}</strong>: {msg.message}
+                                        </div>
+                                    </ListGroupItem>
+                                ))}
+                                {typingUser && (
+                                    <ListGroupItem className="text-muted small">
+                                        {typingUser} está digitando...
+                                    </ListGroupItem>
+                                )}
+                                {userInRoom && (
+                                    <ListGroupItem className="text-success small">
+                                        {selectedUser} está na sala
+                                    </ListGroupItem>
+                                )}
+                                {!userInRoom && (
+                                    <ListGroupItem className="text-muted small">
+                                        {selectedUser} saiu da sala
+                                    </ListGroupItem>
+                                )}
+                            </ListGroup>
+                        )}
                     </div>
 
                     <InputGroup>
