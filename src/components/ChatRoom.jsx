@@ -14,7 +14,8 @@ import {
     Row,
     Col,
 } from 'reactstrap';
-import {BsSend, BsPersonCircle, BsXCircle} from 'react-icons/bs'; // Adicionei o ícone de "fechar"
+import {BsSend, BsPersonCircle, BsXCircle} from 'react-icons/bs';
+import {getRoomHistory} from "../services/api.js"; // Adicionei o ícone de "fechar"
 
 const ChatRoom = ({selectedUser, onCloseChat}) => { // Adicioanei a prop `onCloseChat`
     const [messages, setMessages] = useState([]);
@@ -23,6 +24,24 @@ const ChatRoom = ({selectedUser, onCloseChat}) => { // Adicioanei a prop `onClos
     const [userInRoom, setUserInRoom] = useState(false); // Estado para verificar se usuário entrou/saiu da sala
     const {user} = useUser();
     const socketRef = useRef(null);
+
+    // Nova função para buscar o histórico de mensagens
+    const fetchMessageHistory = async () => {
+        try {
+            const roomId = `${user?.email}-${selectedUser}`;
+
+            const response = await getRoomHistory(roomId);
+
+            console.log(response);
+
+            if (response) {
+                setMessages(response); // Atualiza o estado com o histórico de mensagens
+            }
+
+        } catch (error) {
+            console.error('Erro ao buscar histórico de mensagens:', error);
+        }
+    };
 
     useEffect(() => {
         const token = sessionStorage.getItem('token');
@@ -67,6 +86,7 @@ const ChatRoom = ({selectedUser, onCloseChat}) => { // Adicioanei a prop `onClos
 
     useEffect(() => {
         if (socketRef.current && selectedUser) {
+            fetchMessageHistory();
             socketRef.current.emit('join_private_room', {to: selectedUser});
         }
         return () => {

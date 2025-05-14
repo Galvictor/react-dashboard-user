@@ -75,4 +75,10 @@ export const deleteOwnAccount = async () => {
     return response.data;
 };
 
+// Pegar historico das mensagens do room
+export const getRoomHistory = async (roomId) => {
+    const response = await api.get(`/messages/${roomId}`);
+    return response.data;
+};
+
 export default api;
