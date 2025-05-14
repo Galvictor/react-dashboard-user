@@ -34,23 +34,22 @@ export default function UserTable({users, onEdit, onDelete}) {
                         {/* Botão de editar - apenas admin pode ver */}
                         <Permission roles={['admin']}>
                             <Button
-                                color="warning"
-                                size="sm"
-                                className="me-2"
+                                color="link"
+                                className="btn-action"
                                 onClick={() => onEdit(user)}
                             >
-                                <i className="bi bi-pencil"/> Editar
+                                <i className="bi bi-pencil-square"/>
                             </Button>
                         </Permission>
 
                         {/* Botão de deletar - apenas admin pode ver */}
                         <Permission roles={['admin']}>
                             <Button
-                                color="danger"
-                                size="sm"
+                                color="link"
+                                className="btn-action text-danger"
                                 onClick={() => onDelete(user)}
                             >
-                                <i className="bi bi-trash"/> Deletar
+                                <i className="bi bi-trash"/>
                             </Button>
                         </Permission>
                     </td>
