@@ -16,7 +16,7 @@ import UserTable from '../../components/UserTable';
 import UserPagination from '../../components/UserPagination';
 import UserModal from '../../components/UserModal';
 import Permission from '../../components/Permission.jsx';
-import {createUser, getUsers, updateUser} from "../../services/api.js";
+import {createUser, deleteUser, getUsers, updateUser} from "../../services/api.js";
 
 export default function UsersList() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -103,11 +103,30 @@ export default function UsersList() {
     };
 
 
-    const confirmDelete = () => {
-        console.log("Deletar usuário:", modal.user);
-        // Chamar API para deletar
-        toggleModal();
+    const confirmDelete = async () => {
+        if (modal.user) {
+            console.log("Deletar usuário:", modal.user);
+
+            try {
+                await deleteUser(modal.user.id); // Chamar API para deletar o usuário
+                setUserData((prev) => ({
+                    ...prev,
+                    data: prev.data.filter((user) => user.id !== modal.user.id), // Atualizar a lista removendo o usuário deletado
+                    pagination: {
+                        ...prev.pagination,
+                        totalItems: prev.pagination.totalItems - 1, // Atualizar total de itens
+                        totalPages: Math.ceil((prev.pagination.totalItems - 1) / 5) // Recalcular total de páginas
+                    }
+                }));
+                console.log("Usuário deletado com sucesso.");
+            } catch (err) {
+                console.error("Erro ao deletar o usuário:", err);
+                setError("Erro ao deletar usuário");
+            }
+        }
+        toggleModal(); // Fechar modal
     };
+
 
     return (
         <Container>

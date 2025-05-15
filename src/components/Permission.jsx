@@ -16,7 +16,7 @@ export default function Permission({roles = [], userId, children}) {
     const currentRole = user.funcao;
     const currentUserId = user.id;
 
-    console.log('currentRole:', currentRole);
+    //console.log('currentRole:', currentRole);
 
     if (roles.includes(currentRole) || (userId && userId === currentUserId)) {
         return <>{children}</>;
