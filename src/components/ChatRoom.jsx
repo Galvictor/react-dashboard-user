@@ -24,6 +24,7 @@ const ChatRoom = ({selectedUser, onCloseChat}) => {
     const {user} = useUser();
     const socketRef = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
+    const chatMessagesRef = useRef(null);
 
     const fetchMessageHistory = async () => {
         if (isLoading) return;
@@ -42,6 +43,13 @@ const ChatRoom = ({selectedUser, onCloseChat}) => {
             setIsLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (chatMessagesRef.current) {
+            // Rolando o container de mensagens para o final quando uma nova mensagem é adicionada
+            chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+        }
+    }, [messages]); // Monitora mudanças na lista de mensagens
 
     useEffect(() => {
         const token = sessionStorage.getItem('token');
@@ -131,7 +139,7 @@ const ChatRoom = ({selectedUser, onCloseChat}) => {
                     />
                 </CardHeader>
                 <CardBody>
-                    <div className="chat-messages">
+                    <div className="chat-messages" ref={chatMessagesRef}>
                         {isLoading ? (
                             <div className="d-flex justify-content-center align-items-center p-4">
                                 <Spinner color="primary">
@@ -182,7 +190,13 @@ const ChatRoom = ({selectedUser, onCloseChat}) => {
                             className="chat-input"
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
-                            onKeyDown={handleTyping}
+                            onKeyDown={(e) => {
+                                handleTyping(); // Enviar evento de "digitando"
+                                if (e.key === "Enter" && !e.shiftKey) {
+                                    e.preventDefault(); // Evitar quebra de linha
+                                    sendMessage(); // Chamar a função de envio
+                                }
+                            }}
                             placeholder="Digite sua mensagem..."
                         />
                         <Button color="primary" onClick={sendMessage} disabled={!message.trim()}>
