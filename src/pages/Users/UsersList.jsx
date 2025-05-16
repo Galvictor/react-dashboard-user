@@ -25,6 +25,7 @@ export default function UsersList() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [modal, setModal] = useState({isOpen: false, user: null, action: null});
+    const [newUserId, setNewUserId] = useState(null);
 
     // Busca usuários da API
     useEffect(() => {
@@ -74,7 +75,7 @@ export default function UsersList() {
                 // Atualizar lista de usuários e totais de paginação
                 setUserData(prev => ({
                     ...prev,
-                    data: [...prev.data, newUser], // Adiciona o usuário criado na lista
+                    data: [newUser, ...prev.data], // Adiciona o usuário criado como o primeiro item na lista
                     pagination: {
                         ...prev.pagination,
                         totalItems: prev.pagination.totalItems + 1, // Incrementa total de itens
@@ -82,7 +83,14 @@ export default function UsersList() {
                     }
                 }));
 
-                //setCurrentPage(prev => Math.ceil((prev.pagination.totalItems + 1) / 5));
+                //setCurrentPage(prev => Math.ceil((prev.pagination.totalItems + 1) / 5)); // esta bugando
+
+                setNewUserId(newUser.id);
+
+                // Remove o destaque após 3 segundos
+                setTimeout(() => {
+                    setNewUserId(null);
+                }, 3000);
 
             }).catch(err => console.error('Erro ao criar usuário:', err));
         } else if (modal.action === 'edit') {
@@ -173,6 +181,7 @@ export default function UsersList() {
                             users={userData.data}
                             onEdit={handleEdit}
                             onDelete={handleDelete}
+                            highlightUserId={newUserId}
                         />
                     )}
 

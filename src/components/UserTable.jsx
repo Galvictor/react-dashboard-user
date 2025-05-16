@@ -3,7 +3,7 @@ import {Table, Badge, Button} from 'reactstrap';
 import {formatDate, getBadgeColor} from '../utils/formatters';
 import Permission from "./Permission.jsx";
 
-export default function UserTable({users, onEdit, onDelete}) {
+export default function UserTable({users, onEdit, onDelete, highlightUserId}) {
     return (
         <Table hover className="align-middle">
             <thead>
@@ -19,7 +19,7 @@ export default function UserTable({users, onEdit, onDelete}) {
             </thead>
             <tbody>
             {users.map((user) => (
-                <tr key={user.id}>
+                <tr key={user.id} className={highlightUserId === user.id ? 'highlight-row' : ''}>
                     <td>{user.nome}</td>
                     <td>{user.email}</td>
                     <td>{user.telefone}</td>

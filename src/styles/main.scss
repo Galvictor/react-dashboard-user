@@ -39,3 +39,19 @@ body {
     transition: background 0.3s;
   }
 }
+
+.highlight-row {
+  td {
+    background-color: #d4edda; /* Verde claro */
+    animation: fade-highlight 3s ease-out;
+  }
+}
+
+@keyframes fade-highlight {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.5; /* Reduzir a opacidade para que o destaque desapareça suavemente */
+  }
+}
