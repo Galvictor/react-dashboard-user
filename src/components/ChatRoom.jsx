@@ -159,7 +159,7 @@ const ChatRoom = ({selectedUser, onCloseChat}) => {
                                             className={`p-2 rounded ${
                                                 msg.from === user.email ? 'bg-primary text-white' : 'bg-light'
                                             }`}
-                                            style={{maxWidth: '75%'}}
+                                            style={{maxWidth: '75%', whiteSpace: 'pre-line'}}
                                         >
                                             <strong>{msg.from === user.email ? 'Você' : msg.name}</strong>: {msg.message}
                                         </div>
@@ -186,18 +186,19 @@ const ChatRoom = ({selectedUser, onCloseChat}) => {
 
                     <InputGroup>
                         <Input
-                            type="text"
+                            type="textarea" // Mude aqui para textarea
                             className="chat-input"
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
                             onKeyDown={(e) => {
                                 handleTyping(); // Enviar evento de "digitando"
                                 if (e.key === "Enter" && !e.shiftKey) {
-                                    e.preventDefault(); // Evitar quebra de linha
-                                    sendMessage(); // Chamar a função de envio
+                                    e.preventDefault(); // Evitar quebra de linha e enviar mensagem
+                                    sendMessage();
                                 }
                             }}
                             placeholder="Digite sua mensagem..."
+                            style={{resize: "none"}} // Opção para evitar redimensionamento do textarea
                         />
                         <Button color="primary" onClick={sendMessage} disabled={!message.trim()}>
                             <BsSend/>
